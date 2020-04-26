@@ -1,2 +1,2 @@
-# g
-Geoffrey Butler
+# g - your workflow's butler
+
