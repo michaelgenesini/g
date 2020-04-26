@@ -1,23 +1,21 @@
 import { RequestHandler, send } from 'micro'
-import { router, get, put, post } from 'microrouter'
+import { get, post, router } from 'microrouter'
 
-import { indexAdd } from './routes/add'
-import { getHello, indexHello } from './routes/hello'
+import { indexObjectPost } from './routes/objects/post'
+import { indexObjectGetAll, indexObjectGet } from './routes/objects/get'
 
-const service: RequestHandler = (req, res) => {
-  const data = {
+const service: RequestHandler = (_, res) => {
+  send(res, 200, {
     status: 'ok',
     data: {
-      message: 'Welcome to Micro '
+      message: 'Welcome to G '
     }
-  }
-
-  send(res, 200, data)
+  })
 }
 
 module.exports = router(
   get('/', service),
-  get('/hello', indexHello),
-  get('/hello/:toWho', getHello),
-  post('/add', indexAdd)
+  post('/objects', indexObjectPost),
+  get('/objects', indexObjectGetAll),
+  get('/objects/:objectUuid', indexObjectGet),
 )

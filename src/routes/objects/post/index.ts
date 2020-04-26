@@ -1,13 +1,13 @@
-import { writeFile } from 'fs'
+import { promises as fsPromises } from 'fs'
 import { json, send } from 'micro'
 import { AugmentedRequestHandler } from 'microrouter'
-import { data } from '../../constants/paths'
-import { getUuid } from '../../utils/uuid'
-import { getTemplate } from '../../utils/templates'
+import { data } from '../../../constants/paths'
+import { getUuid } from '../../../utils/uuid'
+import { getTemplate } from '../../../utils/templates'
 
 type TPayload = { name: string }
 
-export const indexAdd: AugmentedRequestHandler = async (req, res) => {
+export const indexObjectPost: AugmentedRequestHandler = async (req, res) => {
   const uuid = getUuid()
 
   try {
@@ -19,9 +19,7 @@ export const indexAdd: AugmentedRequestHandler = async (req, res) => {
 
     const template = getTemplate({ name, uuid })
 
-    writeFile(`${data}/${uuid}.md`, template, (err) => {
-      if (err) throw err
-    })
+    await fsPromises.writeFile(`${data}/${uuid}.md`, template)
   } catch (err) {
     return send(res, 400, {
       status: 'error',

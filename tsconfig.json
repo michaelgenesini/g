@@ -13,6 +13,7 @@
     "outDir": "./lib",
     "skipLibCheck": true,
     "strict": true,
+    "typeRoots": ["@types"],
     "paths": {
       "@/*": ["./src/*"]
     },
