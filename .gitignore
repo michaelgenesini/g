@@ -1,5 +1,9 @@
-node_modules
-lib
+# Dependencies
+**/node_modules
+
+# Builds
+**/lib
+**/.next
 
 # Paw
-g.paw
+**/g.paw
