@@ -4,11 +4,13 @@ type TParam = {
 }
 
 export const getTemplate = ({ name, uuid }: TParam) => {
+  const date = new Date()
+
   return `
 ---
   uuid: ${uuid}
   name: ${name}
-  createdAt: ${new Date()}
+  createdAt: ${date.toISOString()}
 ---
 `.trim()
 }

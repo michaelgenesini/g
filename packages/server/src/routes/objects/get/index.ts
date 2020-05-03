@@ -23,6 +23,8 @@ export const indexObjectGetAll: AugmentedRequestHandler = async (_, res) => {
       .map((content: any) => yaml.load(content.value))[0]
     )
 
+  res.setHeader('Access-Control-Allow-Origin', '*')
+
   send(res, 200, {
     status: 'success',
     data,
@@ -41,6 +43,8 @@ export const indexObjectGet: AugmentedRequestHandler = async (req, res) => {
       .map((content: any) => yaml.load(content.value))[0]
     )
     .filter(object => object.uuid === objectUuid)
+
+  res.setHeader('Access-Control-Allow-Origin', '*')
 
   send(res, 200, {
     status: 'success',

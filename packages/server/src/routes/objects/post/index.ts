@@ -9,6 +9,7 @@ type TPayload = { name: string }
 
 export const indexObjectPost: AugmentedRequestHandler = async (req, res) => {
   const uuid = getUuid()
+  res.setHeader('Access-Control-Allow-Origin', '*')
 
   try {
     const payload = (await json(req)) as TPayload
