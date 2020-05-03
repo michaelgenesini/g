@@ -1,2 +1,2 @@
-# g - your workflow's butler
+# g - your workflow butler
 
