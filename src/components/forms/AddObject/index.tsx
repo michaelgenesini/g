@@ -9,7 +9,7 @@ type TProps = {
 }
 
 export const AddObject = ({ onSubmitted }: TProps) => {
-  const submitHandler = useCallback((values, { setSubmitting }) => {
+  const submitHandler = useCallback((values, { setSubmitting, resetForm }) => {
     const run = async () => {
       await addObject({
         content: values.content,
@@ -17,6 +17,8 @@ export const AddObject = ({ onSubmitted }: TProps) => {
       })
 
       setSubmitting(false)
+
+      resetForm()
 
       onSubmitted()
     }

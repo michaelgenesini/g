@@ -2,9 +2,6 @@ import React from 'react'
 import Link from 'next/link'
 import { Heading, Link as RebassLink, Box } from 'rebass'
 
-const LinkTest = (props: any) =>
-  <RebassLink {...props} />
-
 const Page = () => (
   <>
     <Box mb={2}>

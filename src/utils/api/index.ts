@@ -1,3 +1,4 @@
+import path from 'path'
 import { promises as fsPromises } from 'fs'
 import matter from 'gray-matter'
 import { dataPath } from '@/constants/path'
@@ -8,7 +9,9 @@ export const getData = async (withContent = false) => {
     const filesNames = await fsPromises.readdir(`${dataPath}`)
 
     const files = await Promise.all(
-      filesNames.map(name => fsPromises.readFile(`${dataPath}/${name}`, 'utf-8'))
+      filesNames
+        .filter(file => path.extname(file).toLowerCase() === '.md')
+        .map(name => fsPromises.readFile(`${dataPath}/${name}`, 'utf-8'))
     )
     const objects = files.map(file => matter(file))
 
