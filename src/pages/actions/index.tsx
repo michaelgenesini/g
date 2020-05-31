@@ -3,13 +3,11 @@ import { Heading, Box } from 'rebass'
 
 const Page = () => (
   <>
-    <Box mb={2}>
-      <Heading as='h1' fontSize={[5, 6]}>
-        Actions
-      </Heading>
+    <Box mb={3}>
+      <Heading as='h1' fontSize={6}>Actions</Heading>
     </Box>
 
-    <Box mb={2}>
+    <Box mb={3}>
       <ul>
         <li>notify</li>
         <li>create_from_template</li>

@@ -4,7 +4,7 @@ type TParam = {
   uuid: string
 }
 
-export const getTemplate = ({ content = '', name, uuid }: TParam) => {
+export const getNoteTemplate = ({ content = '', name, uuid }: TParam) => {
   const date = new Date()
 
   return `
