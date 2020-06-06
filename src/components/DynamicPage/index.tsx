@@ -4,3 +4,4 @@
 //   () => import('../components/hello3'),
 //   { ssr: false }
 // )
+export default undefined

@@ -6,12 +6,12 @@ import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { parseISO, format } from 'date-fns'
 
 type TProps = {
-  note?: {
+  note: {
     _id: string
     content: string
     createdAt: string
     name: string
-  }
+  } | null
 }
 
 const Page = ({ note }: TProps) => {
@@ -40,19 +40,40 @@ const Page = ({ note }: TProps) => {
 
 export const getStaticPaths = async () => {
   const response = await getNotes()
+
+  if (!response.ok) {
+    return {
+      fallback: true,
+    } as const
+  }
+
   const paths = response.data.map(note => ({ params: { _id: note._id }}))
 
   return {
     paths,
     fallback: false
-  }
+  } as const
 }
 
 
 export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) return { props: { note: undefined }}
+  if (!params) {
+    return {
+      props: {
+        note: null,
+      },
+    }
+  }
 
   const response = await getNote(params._id)
+
+  if (!response.ok) {
+    return {
+      props: {
+        note: null
+      }
+    }
+  }
 
   return {
     props: {

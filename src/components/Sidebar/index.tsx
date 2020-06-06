@@ -5,7 +5,7 @@ import { Link } from '@/components/Link'
 import { fetcher } from '@/utils/api'
 
 export const Sidebar = () => {
-  const { data, error } = useSWR('/api/projects', fetcher)
+  const { data, error } = useSWR('/api/projects', fetcher as any)
 
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>

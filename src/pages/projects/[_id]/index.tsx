@@ -1,17 +1,14 @@
 import React from 'react'
 import { GetStaticProps } from 'next'
-import { getProject, getProjects } from '@/api/projects'
-import { Box, Text, Card, Flex, Heading } from 'rebass'
-import { Link } from '@/components/Link'
 import { parseISO, format } from 'date-fns'
+import { Box, Text, Card, Flex, Heading } from 'rebass'
+import { getProject, getProjects } from '@/api/projects'
+import { Link } from '@/components/Link'
+import { TemplateList } from '@/components/TemplateList'
+import { TProjectAggregate } from '@/types'
 
 type TProps = {
-  project?: {
-    _id: string
-    createdAt: string
-    name: string
-    notes: string[]
-  }
+  project: TProjectAggregate | null
 }
 
 const Page = ({ project }: TProps) => {
@@ -69,11 +66,82 @@ const Page = ({ project }: TProps) => {
       </Box>
 
       <Box mb={3}>
-        <Heading>Templates:</Heading>
+        <Heading fontSize={2}>From templates:</Heading>
+      </Box>
+
+      <Flex mb={3}>
+        {project.templates.length === 0
+          ? (<Text>No templates saved for this project</Text>)
+          : project.templates.map(template => (
+            <Box key={template._id} mb={3}>
+              <Link
+                href="/projects/[_id]/template/[template_id]/note/new"
+                as={`/projects/${project._id}/template/${template._id}/note/new`}
+                unstyled
+              >
+                  <Text fontSize={2} fontWeight="bold">{template.name}</Text>
+              </Link>
+              </Box>
+          ))
+        }
+      </Flex>
+
+      <Box mb={4}>
+        <Link
+          as={`/projects/${project._id}/template/new`}
+          href="/projects/[_id]/template/new"
+          nav
+        >
+          <Flex alignItems="center">
+            <Box mr={2}>
+              <Text fontSize={3} color="primary">+</Text>
+            </Box>
+            <Text>Add template</Text>
+          </Flex>
+        </Link>
       </Box>
 
       <Box mb={3}>
-        <Text>Coming soon</Text>
+        <Heading>Todos:</Heading>
+      </Box>
+
+      <Box>
+        {project.todos.length > 0
+          ? project.todos
+            .map((note: any) => (
+              <Box key={note._id} mb={3}>
+                <Link
+                  href="/todos/[_id]"
+                  as={`/todos/${note._id}`}
+                  unstyled
+                >
+                  <Card>
+                    <Text fontSize={3} fontWeight="bold">{note.name}</Text>
+                    <Text color="muted">{format(parseISO(note.createdAt), 'dd MMMM p')}</Text>
+                  </Card>
+                </Link>
+              </Box>
+            ))
+          : (
+            <Box mb={2}>
+              <Text>No todos in this project</Text>
+            </Box>
+          )}
+      </Box>
+
+      <Box mb={4}>
+        <Link
+          as={`/projects/${project._id}/todo/new`}
+          href="/projects/[_id]/todo/new"
+          nav
+        >
+          <Flex alignItems="center">
+            <Box mr={2}>
+              <Text fontSize={3} color="primary">+</Text>
+            </Box>
+            <Text>Add todo</Text>
+          </Flex>
+        </Link>
       </Box>
     </>
   )
@@ -81,18 +149,39 @@ const Page = ({ project }: TProps) => {
 
 export const getStaticPaths = async () => {
   const response = await getProjects()
-  const paths = response.data.map(note => ({ params: { _id: note._id }}))
+
+  if (!response.ok) {
+    return {
+      fallback: true,
+    } as const
+  }
+
+  const paths = response.data.map(project => ({ params: { _id: project._id }}))
 
   return {
     paths,
     fallback: false
-  }
+  } as const
 }
 
 export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) return { props: { project: undefined }}
+  if (!params) {
+    return {
+      props: {
+        project: null,
+      },
+    }
+  }
 
   const response = await getProject(params._id)
+
+  if (!response.ok) {
+    return {
+      props: {
+        project: null,
+      },
+    }
+  }
 
   return {
     props: {

@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import nextConnect from 'next-connect'
-import { dbMiddleware, NextApiRequestWithDB } from '@/middlewares/database'
+import { middlewares } from '@/middlewares'
+import { NextApiRequestWithDB } from '@/middlewares/database'
 import { ObjectID } from 'mongodb'
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -77,18 +78,8 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handler = nextConnect()
 
-handler.use(dbMiddleware)
-
-
-handler.use(async (req: NextApiRequest, res: NextApiResponse) => {
-  switch (req.method) {
-    case 'GET':
-      return get(req, res)
-    case 'PUT':
-      return put(req, res)
-    default:
-      return res.status(400).json({ status: 'error' })
-  }
-})
+handler.use(middlewares)
+handler.get(get)
+handler.put(put)
 
 export default handler

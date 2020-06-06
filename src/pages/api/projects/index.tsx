@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import nextConnect from 'next-connect'
-import { dbMiddleware, NextApiRequestWithDB } from '@/middlewares/database'
+import { middlewares } from '@/middlewares'
+import { NextApiRequestWithDB } from '@/middlewares/database'
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -48,7 +49,7 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const doc = await (req as NextApiRequestWithDB).db
       .collection('projects')
-      .insert({
+      .insertOne({
         name,
         createdAt: date.toISOString(),
       })
@@ -71,17 +72,9 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
 
 const handler = nextConnect()
 
-handler.use(dbMiddleware)
+handler.use(middlewares)
 
-handler.use(async (req: NextApiRequest, res: NextApiResponse) => {
-  switch (req.method) {
-    case 'GET':
-      return get(req, res)
-    case 'PUT':
-      return put(req, res)
-    default:
-      return res.status(400).json({ status: 'error' })
-  }
-})
+handler.get(get)
+handler.put(put)
 
 export default handler

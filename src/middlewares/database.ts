@@ -18,22 +18,18 @@ const client = new MongoClient(mongoConnectionString, {
   useUnifiedTopology: true,
 })
 
-const dbMiddleware = nextConnect()
-
 export type NextApiRequestWithDB = NextApiRequest & {
   db: any
   dbClient: any
 }
 
-const database = async (req: NextApiRequest, res: NextApiResponse, next: any) => {
+export const database = async (req: NextApiRequest, res: NextApiResponse, next: any) => {
+
   if (!client.isConnected()) {
     await client.connect()
   }
 
   (req as NextApiRequestWithDB).db = client.db(DB_NAME)
+
   return next()
 }
-
-dbMiddleware.use(database)
-
-export { dbMiddleware }

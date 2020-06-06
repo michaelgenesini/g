@@ -24,10 +24,10 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
       const emoji = randomEmoji.random({ count: 1 })[0]
 
       const response = await addProject({
-        name: `${capitalize(values.name)} ${emoji.character}`,
+        name: `${emoji.character} ${capitalize(values.name)}`,
       })
 
-      if (response.status === 'error') {
+      if (!response.ok) {
         setErrors({
           name: 'missing name'
         })
@@ -64,9 +64,9 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
           as='form'
           flexDirection="column"
           flex={1}
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit as unknown as ((event: React.FormEvent<HTMLDivElement>) => void)}
         >
-          <Box mb={4}>
+          <Flex mb={4} flex={1} flexDirection="column">
             <Label htmlFor='name'>Name</Label>
             <Input
               id='name'
@@ -76,11 +76,13 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
               onChange={handleChange}
               onBlur={handleBlur}
               value={values.name}
+              autoFocus
+              autoComplete="off"
             />
             <Text color="accent">
               {errors.name && touched.name && errors.name}
             </Text>
-          </Box>
+          </Flex>
 
           <Flex>
             <Button type="submit" disabled={isSubmitting}>Save</Button>
