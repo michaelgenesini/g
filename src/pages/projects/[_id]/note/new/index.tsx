@@ -4,16 +4,12 @@ import { getProjects } from '@/api/projects'
 import { GetStaticProps } from 'next'
 
 type TProps = {
-  projectId: string | null
+  projectId?: string
 }
 
-const Page = ({ projectId }: TProps) => {
-
-  return (
-    <AddNoteForm projectId={projectId || undefined} onSubmitted={() => console.log('handleRefresh')} />
-  )
-}
-
+const Page = ({ projectId }: TProps) => (
+  <AddNoteForm projectId={projectId} onSubmitted={() => console.log('handleRefresh')} />
+)
 
 export const getStaticPaths = async () => {
   const response = await getProjects()
@@ -33,20 +29,10 @@ export const getStaticPaths = async () => {
 }
 
 
-export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        projectId: null,
-      },
-    }
+export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    projectId: params ? params._id : undefined,
   }
-
-  return {
-    props: {
-      projectId: params._id,
-    }
-  }
-}
+})
 
 export default Page

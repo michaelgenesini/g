@@ -1,20 +1,33 @@
-import React from 'react'
-import { GetStaticProps } from 'next'
-import { getNote, getNotes } from '@/api/notes'
-import { Box, Text } from 'rebass'
-import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import React, { useCallback } from 'react'
 import { parseISO, format } from 'date-fns'
-import { TTodo } from '@/types'
+import { Box, Text } from 'rebass'
+import { GetStaticProps } from 'next'
+import useSWR from 'swr'
+import { Label, Checkbox } from '@rebass/forms'
 import { getTodo, getTodos } from '@/api/todos'
+import { AddTaskForm } from '@/components/forms/AddTask'
+import { updateTask } from '@/api/tasks'
 
 type TProps = {
-  todo: TTodo | null
+  todoId: string | null
 }
 
-const Page = ({ todo }: TProps) => {
-  if (!todo) {
-    return <div>Todo not found</div>
-  }
+const Page = ({ todoId }: TProps) => {
+  if (!todoId) return <>Todo not found</>
+
+  const { data: response, mutate } = useSWR(`todo-${todoId}`, () => getTodo(todoId))
+
+  const handleSubmitted = useCallback(() => mutate(), [])
+
+  const handleCheck = useCallback(async ({ _id, completed }) => {
+    await updateTask({ _id, completed })
+    mutate()
+  }, [])
+
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const todo = response.data
 
   return (
     <>
@@ -26,7 +39,26 @@ const Page = ({ todo }: TProps) => {
         <Text color="muted">{format(parseISO(todo.createdAt), 'dd MMMM p')}</Text>
       </Box>
 
-      <Box mb={3} height={1} width={1} bg='gray' />
+      <Box mb={2} height={1} width={1} bg='gray' />
+
+      <Box mb={2}>
+        {todo.tasks.map(task => (
+          <Box key={task._id} my={2}>
+            <Label style={{ cursor: 'pointer' }}>
+              <Checkbox
+                defaultChecked={task.completed}
+                id={task._id}
+                name={task._id}
+                onClick={() => handleCheck({ _id: task._id, completed: !task.completed })}
+              />
+              <Text style={{ textDecoration: task.completed ? 'line-through' : 'none'}}>{task.content}</Text>
+            </Label>
+            <Box my={2} height={1} width={1} bg='gray' />
+          </Box>
+        ))}
+      </Box>
+
+      <AddTaskForm todoId={todo._id} onSubmitted={handleSubmitted} />
     </>
   )
 }
@@ -49,30 +81,10 @@ export const getStaticPaths = async () => {
 }
 
 
-export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        todo: null,
-      },
-    }
+export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    todoId: params ? params._id : null
   }
-
-  const response = await getTodo(params._id)
-
-  if (!response.ok) {
-    return {
-      props: {
-        todo: null
-      }
-    }
-  }
-
-  return {
-    props: {
-      todo: response.data
-    }
-  }
-}
+})
 
 export default Page

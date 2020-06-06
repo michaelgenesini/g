@@ -1,5 +1,5 @@
 import React, { useCallback, SyntheticEvent } from 'react'
-import { parseISO, format } from 'date-fns'
+import { parseISO, format, formatDistanceToNowStrict } from 'date-fns'
 import { deleteTodo } from '@/api/todos'
 import { Link } from '@/components/Link'
 import { Box, Card, Text, Flex } from 'rebass'
@@ -25,25 +25,27 @@ export const TodoList = ({ todo }: TProps) => {
   }, [todo])
 
   return (
-    <Box mb={3}>
-      <Link
-        href="/todos/[_id]"
-        as={`/todos/${todo._id}`}
-        unstyled
-      >
-        <Card>
+    <>
+      <Box py={3}>
+        <Link
+          href="/todos/[_id]"
+          as={`/todos/${todo._id}`}
+          unstyled
+        >
           <Flex>
             <Flex flex={1} flexDirection="column">
               <Text fontSize={3} fontWeight="bold">{todo.name}</Text>
-              <Text color="muted">{format(parseISO(todo.createdAt), 'dd MMMM p')}</Text>
+              <Text color="muted">{formatDistanceToNowStrict(parseISO(todo.createdAt), { addSuffix: true })}</Text>
             </Flex>
 
-            <Flex flexDirection="column">
-              <Text color="muted" fontSize={3} onClick={handleDelete}>X</Text>
+            <Flex flexDirection="column" justifyContent="flex-end">
+              <Text color="muted" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
-        </Card>
-      </Link>
-    </Box>
+        </Link>
+      </Box>
+
+      <Box width={1} height={1} bg="muted" />
+    </>
   )
 }

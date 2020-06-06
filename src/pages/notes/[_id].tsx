@@ -4,20 +4,21 @@ import { getNote, getNotes } from '@/api/notes'
 import { Box, Text } from 'rebass'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
 import { parseISO, format } from 'date-fns'
+import useSWR from 'swr'
 
 type TProps = {
-  note: {
-    _id: string
-    content: string
-    createdAt: string
-    name: string
-  } | null
+  noteId: string | null
 }
 
-const Page = ({ note }: TProps) => {
-  if (!note) {
-    return <div>Note not found</div>
-  }
+const Page = ({ noteId }: TProps) => {
+  if (!noteId) return <>Note not found</>
+
+  const { data: response } = useSWR(`note-${noteId}`, () => getNote(noteId))
+
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const note = response.data
 
   return (
     <>
@@ -56,30 +57,10 @@ export const getStaticPaths = async () => {
 }
 
 
-export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        note: null,
-      },
-    }
+export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    noteId: params ? params._id : null
   }
-
-  const response = await getNote(params._id)
-
-  if (!response.ok) {
-    return {
-      props: {
-        note: null
-      }
-    }
-  }
-
-  return {
-    props: {
-      note: response.data
-    }
-  }
-}
+})
 
 export default Page

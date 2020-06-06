@@ -10,14 +10,31 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const doc = await (req as NextApiRequestWithDB).db
       .collection('todos')
-      .findOne({ '_id' : new ObjectId(objectId) })
+      .aggregate([
+        { $match : { _id : new ObjectId(objectId) } },
+        {
+          $lookup: {
+            from: 'tasks',
+            localField: 'tasks',
+            foreignField: '_id',
+            as: 'tasks',
+          },
+        },
+      ])
+      .toArray()
 
-  return res
-    .status(200)
-    .json({
-      status: 'success',
-      data: doc,
-    })
+    if (doc.length) {
+      return res
+        .status(200)
+        .json({
+          status: 'success',
+          data: doc[0],
+        })
+    }
+
+    return res
+      .status(404)
+      .json({ status: 'not found' })
   } catch (error) {
     return res
       .status(400)

@@ -1,16 +1,17 @@
 import React from 'react'
 import { compareDesc } from 'date-fns'
 import { Box, Heading, Text, Flex } from 'rebass'
+import useSWR from 'swr'
 import { getTodos } from '@/api/todos'
 import { Link } from '@/components/Link'
 import { TodoList } from '@/components/TodoList'
-import { TTodo } from '@/types'
 
-type TProps = {
-  todos: TTodo[]
-}
+const Page = () => {
+  const { data: response } = useSWR('todos', () => getTodos())
 
-const Page = ({ todos }: TProps) => {
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
   return (
     <>
       <Box mb={3}>
@@ -21,44 +22,25 @@ const Page = ({ todos }: TProps) => {
         <Heading>All your todos:</Heading>
       </Box>
 
-      <Box>
-        {todos
+      <Box mb={2}>
+        {response.data
           .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
           .map((object) => (
             <TodoList key={object._id} todo={object} />
           ))
         }
-
-        <Link href="/notes/new" nav>
-          <Flex alignItems="center">
-            <Box mr={2}>
-              <Text fontSize={3} color="primary">+</Text>
-            </Box>
-            <Text>Add note</Text>
-          </Flex>
-        </Link>
       </Box>
+
+      <Link href="/todos/new" nav>
+        <Flex alignItems="center">
+          <Box mr={2}>
+            <Text fontSize={3} color="primary">+</Text>
+          </Box>
+          <Text>Add note</Text>
+        </Flex>
+      </Link>
     </>
   )
-}
-
-export const getStaticProps = async () => {
-  const response = await getTodos()
-
-  if (!response.ok) {
-    return {
-      props: {
-        todos: [],
-      }
-    }
-
-  }
-
-  return {
-    props: {
-      todos: response.data
-    }
-  }
 }
 
 export default Page

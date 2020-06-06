@@ -4,17 +4,14 @@ import { Box, Heading, Text, Flex } from 'rebass'
 import { getTemplates } from '@/api/templates'
 import { Link } from '@/components/Link'
 import { TemplateList } from '@/components/TemplateList'
+import useSWR from 'swr'
 
-type TProps = {
-  templates: {
-    _id: string
-    createdAt: string
-    name: string
-    content: string
-  }[]
-}
+const Page = () => {
+  const { data: response } = useSWR('templates', () => getTemplates())
 
-const Page = ({ templates }: TProps) => {
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
   return (
     <>
       <Box mb={3}>
@@ -26,7 +23,7 @@ const Page = ({ templates }: TProps) => {
       </Box>
 
       <Box>
-        {templates
+        {response.data
           .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
           .map((object) => (
             <TemplateList key={object._id} template={object} />
@@ -44,24 +41,6 @@ const Page = ({ templates }: TProps) => {
       </Box>
     </>
   )
-}
-
-export const getStaticProps = async () => {
-  const response = await getTemplates()
-
-  if (!response.ok) {
-    return {
-      props: {
-        templates: [],
-      },
-    }
-  }
-
-  return {
-    props: {
-      templates: response.data,
-    }
-  }
 }
 
 export default Page

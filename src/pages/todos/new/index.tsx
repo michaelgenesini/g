@@ -1,8 +1,8 @@
 import React from 'react'
-import { AddNoteForm } from '@/components/forms/AddNote'
+import { AddTodoForm } from '@/components/forms/AddTodo'
 
 const Page = () => (
-  <AddNoteForm onSubmitted={() => console.log('handleRefresh')} />
+  <AddTodoForm onSubmitted={() => console.log('handleRefresh')} />
 )
 
 export default Page

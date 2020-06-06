@@ -33,20 +33,10 @@ export const getStaticPaths = async () => {
 }
 
 
-export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        projectId: null,
-      },
-    }
+export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    projectId: params ? params._id : null,
   }
-
-  return {
-    props: {
-      projectId: params._id,
-    }
-  }
-}
+})
 
 export default Page

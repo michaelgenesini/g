@@ -1,20 +1,26 @@
 import React from 'react'
+import useSWR from 'swr'
+import { Box, Text, Card, Flex, Heading } from 'rebass'
 import { GetStaticProps } from 'next'
 import { parseISO, format } from 'date-fns'
-import { Box, Text, Card, Flex, Heading } from 'rebass'
+import { Select } from '@rebass/forms'
 import { getProject, getProjects } from '@/api/projects'
 import { Link } from '@/components/Link'
-import { TemplateList } from '@/components/TemplateList'
-import { TProjectAggregate } from '@/types'
+import { TTemplate } from '@/types'
 
 type TProps = {
-  project: TProjectAggregate | null
+  projectId: string | null
 }
 
-const Page = ({ project }: TProps) => {
-  if (!project) {
-    return <div>Project not found</div>
-  }
+const Page = ({ projectId }: TProps) => {
+  if (!projectId) return <>Project not found</>
+
+  const { data: response } = useSWR(`project-${projectId}`, () => getProject(projectId))
+
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const project = response.data
 
   return (
     <>
@@ -26,10 +32,11 @@ const Page = ({ project }: TProps) => {
         <Heading>Notes:</Heading>
       </Box>
 
-      <Box>
-        {project.notes.length > 0
-          ? project.notes
-            .map((note: any) => (
+      <Box mb={2}>
+        {project.notes.length === 0
+          ? (<Box mb={2}><Text>No notes in this project</Text></Box>)
+          : project.notes
+            .map((note) => (
               <Box key={note._id} mb={3}>
                 <Link
                   href="/notes/[_id]"
@@ -43,71 +50,67 @@ const Page = ({ project }: TProps) => {
                 </Link>
               </Box>
             ))
-          : (
-            <Box mb={2}>
-              <Text>No notes in this project</Text>
-            </Box>
-          )}
+          }
       </Box>
 
-      <Box mb={4}>
-        <Link
-          as={`/projects/${project._id}/note/new`}
-          href="/projects/[_id]/note/new"
-          nav
-        >
-          <Flex alignItems="center">
-            <Box mr={2}>
-              <Text fontSize={3} color="primary">+</Text>
-            </Box>
-            <Text>Add note</Text>
-          </Flex>
-        </Link>
-      </Box>
+      <Flex mb={4}>
+        {project.templates.length > 0 && (
+          <Box width={200} mr={2}>
+            <Select
+              id='template'
+              name='template'
+              defaultValue='no template'>
+              {project.templates
+                .concat({ _id: '0', name: 'no template', createdAt: '', content: '' })
+                .map((template: TTemplate) => (
+                  <option key={template._id}>
+                    {template.name}
+                  </option>
+                ))
+              }
+            </Select>
+          </Box>
+        )}
 
-      <Box mb={3}>
-        <Heading fontSize={2}>From templates:</Heading>
-      </Box>
-
-      <Flex mb={3}>
-        {project.templates.length === 0
-          ? (<Text>No templates saved for this project</Text>)
-          : project.templates.map(template => (
-            <Box key={template._id} mb={3}>
-              <Link
-                href="/projects/[_id]/template/[template_id]/note/new"
-                as={`/projects/${project._id}/template/${template._id}/note/new`}
-                unstyled
-              >
-                  <Text fontSize={2} fontWeight="bold">{template.name}</Text>
-              </Link>
+        <Box mr={2}>
+          <Link
+            as={`/projects/${project._id}/note/new`}
+            href="/projects/[_id]/note/new"
+            nav
+          >
+            <Flex alignItems="center">
+              <Box mr={2}>
+                <Text fontSize={3} color="primary">+</Text>
               </Box>
-          ))
-        }
-      </Flex>
+              <Text>Add note</Text>
+            </Flex>
+          </Link>
+        </Box>
 
-      <Box mb={4}>
-        <Link
-          as={`/projects/${project._id}/template/new`}
-          href="/projects/[_id]/template/new"
-          nav
-        >
-          <Flex alignItems="center">
-            <Box mr={2}>
-              <Text fontSize={3} color="primary">+</Text>
-            </Box>
-            <Text>Add template</Text>
-          </Flex>
-        </Link>
-      </Box>
+        <Box>
+          <Link
+            as={`/projects/${project._id}/template/new`}
+            href="/projects/[_id]/template/new"
+            nav
+          >
+            <Flex alignItems="center">
+              <Box mr={2}>
+                <Text fontSize={3} color="primary">+</Text>
+              </Box>
+              <Text>Add template</Text>
+            </Flex>
+          </Link>
+        </Box>
+      </Flex>
 
       <Box mb={3}>
         <Heading>Todos:</Heading>
       </Box>
 
       <Box>
-        {project.todos.length > 0
-          ? project.todos
+        {project.todos.length === 0
+          ? (<Box mb={2}><Text>No todos in this project</Text></Box>)
+          : project.todos
             .map((note: any) => (
               <Box key={note._id} mb={3}>
                 <Link
@@ -122,11 +125,7 @@ const Page = ({ project }: TProps) => {
                 </Link>
               </Box>
             ))
-          : (
-            <Box mb={2}>
-              <Text>No todos in this project</Text>
-            </Box>
-          )}
+          }
       </Box>
 
       <Box mb={4}>
@@ -164,30 +163,10 @@ export const getStaticPaths = async () => {
   } as const
 }
 
-export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        project: null,
-      },
-    }
+export const getStaticProps: GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    projectId: params ? params._id : null
   }
-
-  const response = await getProject(params._id)
-
-  if (!response.ok) {
-    return {
-      props: {
-        project: null,
-      },
-    }
-  }
-
-  return {
-    props: {
-      project: response.data
-    }
-  }
-}
+})
 
 export default Page

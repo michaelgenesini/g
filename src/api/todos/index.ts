@@ -1,7 +1,7 @@
 import { fetcher } from '@/utils/api'
-import { TTodo } from '@/types'
+import { TTodo, TTodoAggregate } from '@/types'
 
-export const getTodo = async (uuid: string) => fetcher<TTodo>(
+export const getTodo = async (uuid: string) => fetcher<TTodoAggregate>(
   `http://localhost:3001/api/todos/${uuid}`,
 )
 

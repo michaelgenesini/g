@@ -1,24 +1,18 @@
 import React from 'react'
+import { Box, Heading, Text, Flex } from 'rebass'
 import { compareDesc } from 'date-fns'
 import { getNotes } from '@/api/notes'
 import { Link } from '@/components/Link'
-import {
-  Box,
-  Heading,
-  Text,
-  Flex,
-} from 'rebass'
 import { NoteList } from '@/components/NoteList'
+import { TNote } from '@/types'
+import useSWR from 'swr'
 
-type TProps = {
-  notes: {
-    _id: string
-    createdAt: string
-    name: string
-  }[]
-}
+const Page = () => {
+  const { data: response } = useSWR('notes', () => getNotes())
 
-const Page = ({ notes }: TProps) => {
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
   return (
     <>
       <Box mb={3}>
@@ -30,7 +24,7 @@ const Page = ({ notes }: TProps) => {
       </Box>
 
       <Box>
-        {notes
+        {response.data
           .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
           .map((object) => (
             <NoteList key={object._id} note={object} />
@@ -48,25 +42,6 @@ const Page = ({ notes }: TProps) => {
       </Box>
     </>
   )
-}
-
-export const getStaticProps = async () => {
-  const response = await getNotes()
-
-  if (!response.ok) {
-    return {
-      props: {
-        notes: [],
-      }
-    }
-
-  }
-
-  return {
-    props: {
-      notes: response.data
-    }
-  }
 }
 
 export default Page

@@ -1,14 +1,17 @@
 import React from 'react'
-import { Text, Box, Flex } from 'rebass'
 import useSWR from 'swr'
+import { Text, Box, Flex } from 'rebass'
+import { compareDesc } from 'date-fns'
+import { getProjects } from '@/api/projects'
 import { Link } from '@/components/Link'
-import { fetcher } from '@/utils/api'
 
 export const Sidebar = () => {
-  const { data, error } = useSWR('/api/projects', fetcher as any)
+  const { data: response } = useSWR('projects', () => getProjects())
 
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const projects = response.data
 
   return (
     <>
@@ -20,17 +23,20 @@ export const Sidebar = () => {
         Projects
       </Text>
 
-      {data.data.map((project: any) => (
-        <Box key={project._id}>
-          <Link
-            href="/projects/[_id]"
-            as={`/projects/${project._id}`}
-            nav
-          >
-            <Text fontSize={2}>{project.name}</Text>
-          </Link>
-        </Box>
-      ))}
+      {projects
+        .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
+        .map((project: any) => (
+          <Box key={project._id}>
+            <Link
+              href="/projects/[_id]"
+              as={`/projects/${project._id}`}
+              nav
+            >
+              <Text fontSize={2}>{project.name}</Text>
+            </Link>
+          </Box>
+        ))
+      }
 
       <Link href="/projects/new" nav>
         <Flex alignItems="center">

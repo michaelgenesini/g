@@ -4,20 +4,21 @@ import { Box, Text } from 'rebass'
 import { parseISO, format } from 'date-fns'
 import { getTemplate, getTemplates } from '@/api/templates'
 import { MarkdownRenderer } from '@/components/MarkdownRenderer'
+import useSWR from 'swr'
 
 type TProps = {
-  template: {
-    _id: string
-    content: string
-    createdAt: string
-    name: string
-  } | null
+  templateId: string | null
 }
 
-const Page = ({ template }: TProps) => {
-  if (!template) {
-    return <div>Template not found</div>
-  }
+const Page = ({ templateId }: TProps) => {
+  if (!templateId) return <>Template not found</>
+
+  const { data: response } = useSWR(`template-${templateId}`, () => getTemplate(templateId))
+
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const template = response.data
 
   return (
     <>
@@ -56,30 +57,10 @@ export const getStaticPaths = async () => {
 }
 
 
-export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => {
-  if (!params) {
-    return {
-      props: {
-        template: null,
-      },
-    }
+export const getStaticProps:  GetStaticProps<TProps, { _id: string }> = async ({ params }) => ({
+  props: {
+    templateId: params ? params._id : null
   }
-
-  const response = await getTemplate(params._id)
-
-  if (!response.ok) {
-    return {
-      props: {
-        template: null
-      }
-    }
-  }
-
-  return {
-    props: {
-      template: response.data
-    }
-  }
-}
+})
 
 export default Page

@@ -1,16 +1,20 @@
-import React from 'react'
-import { compareDesc } from 'date-fns'
+import React, { useCallback } from 'react'
+import useSWR from 'swr'
 import { Box, Heading, Text, Flex } from 'rebass'
+import { compareDesc } from 'date-fns'
 import { getProjects } from '@/api/projects'
 import { Link } from '@/components/Link'
 import { ProjectList } from '@/components/ProjectList'
-import { TProject } from '@/types'
 
-type TProps = {
-  projects: TProject[]
-}
+const Page = () => {
+  const { data: response, mutate } = useSWR('projects', () => getProjects())
+  const handleDelete = useCallback(() => mutate(), [])
 
-const Page = ({ projects }: TProps) => {
+  if (!response) return <>loading...</>
+  if (!response.ok) return <>error</>
+
+  const projects = response.data
+
   return (
     <>
       <Box mb={3}>
@@ -21,43 +25,25 @@ const Page = ({ projects }: TProps) => {
         <Heading>All your projects:</Heading>
       </Box>
 
-      <Box>
+      <Box mb={2}>
         {projects
           .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
           .map((object) => (
-            <ProjectList key={object._id} project={object} />
+            <ProjectList key={object._id} project={object} onDelete={handleDelete} />
           ))
         }
-
-        <Link href="/projects/new" nav>
-          <Flex alignItems="center">
-            <Box mr={2}>
-              <Text fontSize={3} color="primary">+</Text>
-            </Box>
-            <Text>Add project</Text>
-          </Flex>
-        </Link>
       </Box>
+
+      <Link href="/projects/new" nav>
+        <Flex alignItems="center">
+          <Box mr={2}>
+            <Text fontSize={3} color="primary">+</Text>
+          </Box>
+          <Text>Add project</Text>
+        </Flex>
+      </Link>
     </>
   )
-}
-
-export const getStaticProps = async () => {
-  const response = await getProjects()
-
-  if (!response.ok) {
-    return {
-      props: {
-        projects: [],
-      },
-    }
-  }
-
-  return {
-    props: {
-      projects: response.data,
-    }
-  }
 }
 
 export default Page

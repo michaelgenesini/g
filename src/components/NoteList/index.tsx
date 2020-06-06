@@ -1,5 +1,5 @@
 import React, { useCallback, SyntheticEvent } from 'react'
-import { parseISO, format } from 'date-fns'
+import { parseISO, format, formatDistanceToNowStrict } from 'date-fns'
 import { deleteNote } from '@/api/notes'
 import { Link } from '@/components/Link'
 import {
@@ -43,11 +43,11 @@ export const NoteList = ({ note }: TProps) => {
           <Flex>
             <Flex flex={1} flexDirection="column">
               <Text fontSize={3} fontWeight="bold">{note.name}</Text>
-              <Text color="muted">{format(parseISO(note.createdAt), 'dd MMMM p')}</Text>
+              <Text color="muted">{formatDistanceToNowStrict(parseISO(note.createdAt), { addSuffix: true })}</Text>
             </Flex>
 
-            <Flex flexDirection="column">
-              <Text color="muted" fontSize={3} onClick={handleDelete}>X</Text>
+            <Flex flexDirection="column" justifyContent="flex-end">
+              <Text color="muted" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
         </Card>
