@@ -1,3 +1,4 @@
+import { BaseEmoji } from 'emoji-mart'
 import { fetcher } from '@/utils/api'
 import { TProject, TProjectAggregate } from '@/types'
 
@@ -9,11 +10,11 @@ export const getProjects = async () => fetcher<TProject[]>(
   `http://localhost:3001/api/projects`,
 )
 
-export const addProject = async ({ name }: { name: string }) => fetcher(
+export const addProject = async ({ emoji, name }: { emoji: BaseEmoji, name: string }) => fetcher(
   'http://localhost:3001/api/projects',
   {
     method: 'put',
-    body: JSON.stringify({ name })
+    body: JSON.stringify({ emoji, name })
   },
 )
 

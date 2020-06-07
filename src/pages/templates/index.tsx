@@ -18,10 +18,6 @@ const Page = () => {
         <Heading as='h1' fontSize={6}>Templates</Heading>
       </Box>
 
-      <Box mb={3}>
-        <Heading>All your templates:</Heading>
-      </Box>
-
       <Box>
         {response.data
           .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))

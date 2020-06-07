@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import nextConnect from 'next-connect'
 import { middlewares } from '@/middlewares'
 import { NextApiRequestWithDB } from '@/middlewares/database'
+import { BaseEmoji } from 'emoji-mart'
 
 const get = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
@@ -34,6 +35,7 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
 }
 
 type TPayload = {
+  emoji: BaseEmoji
   name?: string
 }
 
@@ -42,14 +44,17 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
     const payload = JSON.parse(req.body) as TPayload
 
     const name = payload.name
+    const emoji = payload.emoji
 
     if (!name) throw 'Missing field: name'
+    if (!emoji) throw 'Missing field: emoji'
 
     const date = new Date()
 
     const doc = await (req as NextApiRequestWithDB).db
       .collection('projects')
       .insertOne({
+        emoji,
         name,
         createdAt: date.toISOString(),
       })

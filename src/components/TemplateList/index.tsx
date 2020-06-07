@@ -1,5 +1,5 @@
 import React, { useCallback, SyntheticEvent } from 'react'
-import { parseISO, format } from 'date-fns'
+import { parseISO, format, formatDistanceToNowStrict } from 'date-fns'
 import { Box, Card, Text, Flex } from 'rebass'
 import { deleteTemplate } from '@/api/templates'
 import { Link } from '@/components/Link'
@@ -35,11 +35,11 @@ export const TemplateList = ({ template }: TProps) => {
           <Flex>
             <Flex flex={1} flexDirection="column">
               <Text fontSize={3} fontWeight="bold">{template.name}</Text>
-              <Text color="muted">{format(parseISO(template.createdAt), 'dd MMMM p')}</Text>
+              <Text color="muted">{formatDistanceToNowStrict(parseISO(template.createdAt), { addSuffix: true })}</Text>
             </Flex>
 
-            <Flex flexDirection="column">
-              <Text color="muted" fontSize={3} onClick={handleDelete}>X</Text>
+            <Flex flexDirection="column" justifyContent="flex-end">
+              <Text color="muted" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
         </Card>

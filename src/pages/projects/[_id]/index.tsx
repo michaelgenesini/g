@@ -25,7 +25,7 @@ const Page = ({ projectId }: TProps) => {
   return (
     <>
       <Box mb={3}>
-        <Heading as='h1' fontSize={6}> {project.name}</Heading>
+        <Heading as='h1' fontSize={6}>{project.emoji.native} {project.name}</Heading>
       </Box>
 
       <Box mb={3}>

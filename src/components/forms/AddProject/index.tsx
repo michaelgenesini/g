@@ -1,17 +1,30 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Formik } from 'formik'
-import randomEmoji from 'random-emoji'
 import { Box, Button, Text, Flex } from 'rebass'
+import { BaseEmoji } from 'emoji-mart'
 import { Label, Input } from '@rebass/forms'
 import { addProject } from '@/api/projects'
 import { capitalize } from '@/utils/capitalize'
+import { EmojiPicker } from '@/components/EmojiPicker'
 
 type TProps = {
   onSubmitted: () => void
 }
 
 export const AddProjectForm = ({ onSubmitted }: TProps) => {
+  const [emoji, setEmoji] = useState<BaseEmoji | null>(null)
+
+  const handleSetEmoji = useCallback((selectedEmoji: BaseEmoji) => {
+    console.log({ selectedEmoji })
+
+    setEmoji(selectedEmoji)
+  }, [])
+
   const submitHandler = useCallback((values, { setErrors, setSubmitting, resetForm }) => {
+    console.log(values)
+
+    console.log({ emoji })
+
     if (values.name.trim() === '') {
       setErrors({
         name: 'missing name'
@@ -21,15 +34,14 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
     }
 
     const run = async () => {
-      const emoji = randomEmoji.random({ count: 1 })[0]
-
       const response = await addProject({
-        name: `${emoji.character} ${capitalize(values.name)}`,
+        emoji: emoji!,
+        name: capitalize(values.name),
       })
 
       if (!response.ok) {
         setErrors({
-          name: 'missing name'
+          name: 'response not ok'
         })
 
         return
@@ -43,11 +55,11 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
     }
 
     run().catch(console.error)
-  }, [])
+  }, [emoji])
 
   return (
     <Formik
-      initialValues={{ name: '', content: '' }}
+      initialValues={{ name: '' }}
       onSubmit={submitHandler}
     >
       {({
@@ -66,26 +78,42 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
           flex={1}
           onSubmit={handleSubmit as unknown as ((event: React.FormEvent<HTMLDivElement>) => void)}
         >
-          <Flex mb={4} flex={1} flexDirection="column">
-            <Label htmlFor='name'>Name</Label>
-            <Input
-              id='name'
-              name='name'
-              type='text'
-              placeholder='Project name'
-              onChange={handleChange}
-              onBlur={handleBlur}
-              value={values.name}
-              autoFocus
-              autoComplete="off"
-            />
-            <Text color="accent">
-              {errors.name && touched.name && errors.name}
-            </Text>
-          </Flex>
+          <Flex mb={4} flexDirection="column">
+            <Flex>
+              <Flex mr={2} flexDirection="column">
+                <Label htmlFor='emoji'>&nbsp;</Label>
+                <Flex flex={1} alignItems="center">
+                  <EmojiPicker onEmojiSelected={handleSetEmoji} />
+                </Flex>
+              </Flex>
 
-          <Flex>
-            <Button type="submit" disabled={isSubmitting}>Save</Button>
+              <Flex flex={1} flexDirection="column" mr={2}>
+                <Label htmlFor='name'>Name</Label>
+                <Input
+                  id='name'
+                  name='name'
+                  type='text'
+                  placeholder='Project name'
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  value={values.name}
+                  autoFocus
+                  autoComplete="off"
+                />
+              </Flex>
+
+              <Flex alignItems="flex-end">
+                <Button type="submit" disabled={isSubmitting}>Save</Button>
+              </Flex>
+            </Flex>
+
+            {errors.name && touched.name && (
+              <Box mt={2}>
+                <Text color="accent">
+                  {errors.name}
+                </Text>
+              </Box>
+            )}
           </Flex>
         </Flex>
       )}

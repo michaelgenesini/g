@@ -1,6 +1,9 @@
+import { BaseEmoji } from 'emoji-mart'
+
 export type TProject = {
   _id: string
   createdAt: string
+  emoji: BaseEmoji
   name: string
   notes: string[]
   templates: string[]
@@ -10,6 +13,7 @@ export type TProject = {
 export type TProjectAggregate = {
   _id: string
   createdAt: string
+  emoji: BaseEmoji
   name: string
   notes: TNote[]
   templates: TTemplate[]

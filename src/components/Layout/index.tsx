@@ -13,20 +13,7 @@ type TProps = {
 
 export const Layout = ({ children }: TProps) => (
   <ThemeProvider theme={theme}>
-    <style jsx global>{`
-      body, html {
-        height: 100%;
-        display: block;
-      }
-      #__next {
-        height: 100%;
-        min-height: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-    `}</style>
-
-    <Progress color={theme.colors.primary} />
+    <Progress />
 
     <Header />
 

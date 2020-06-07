@@ -1,9 +1,9 @@
-import React, { useCallback, SyntheticEvent } from 'react'
-import { parseISO, format } from 'date-fns'
+import React, { useCallback, SyntheticEvent, useMemo } from 'react'
 import { deleteProject } from '@/api/projects'
 import { Link } from '@/components/Link'
-import { Box, Card, Text, Flex } from 'rebass'
+import { Box, Text, Flex } from 'rebass'
 import { TProject } from '@/types'
+import { getEmojiFromColons } from '@/utils/emoji'
 
 type TProps = {
   project: TProject
@@ -36,7 +36,10 @@ export const ProjectList = ({ project, onDelete }: TProps) => {
           unstyled
         >
           <Flex>
-            <Flex flex={1} flexDirection="column">
+            <Flex flex={1} alignItems="center">
+              <Flex mr={2} alignItems="center">
+                <Text fontSize={3} fontWeight="bold">{project.emoji.native}</Text>
+              </Flex>
               <Text fontSize={3} fontWeight="bold">{project.name}</Text>
             </Flex>
 
