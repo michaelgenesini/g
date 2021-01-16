@@ -22,10 +22,8 @@ export const AddTodoForm = ({ projectId, onSubmitted }: TProps) => {
     }
 
     const run = async () => {
-      const emoji = randomEmoji.random({ count: 1 })[0]
-
       const response = await addTodo({
-        name: `${emoji.character} ${capitalize(values.name)}`,
+        name: capitalize(values.name),
         project_id: projectId,
       })
 

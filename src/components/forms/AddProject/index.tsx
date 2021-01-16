@@ -9,9 +9,10 @@ import { EmojiPicker } from '@/components/EmojiPicker'
 
 type TProps = {
   onSubmitted: () => void
+  onCancel: () => void
 }
 
-export const AddProjectForm = ({ onSubmitted }: TProps) => {
+export const AddProjectForm = ({ onSubmitted, onCancel }: TProps) => {
   const [emoji, setEmoji] = useState<BaseEmoji | null>(null)
 
   const handleSetEmoji = useCallback((selectedEmoji: BaseEmoji) => {
@@ -78,17 +79,15 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
           flex={1}
           onSubmit={handleSubmit as unknown as ((event: React.FormEvent<HTMLDivElement>) => void)}
         >
-          <Flex mb={4} flexDirection="column">
+          <Flex mb={2} flexDirection="column">
             <Flex>
               <Flex mr={2} flexDirection="column">
-                <Label htmlFor='emoji'>&nbsp;</Label>
                 <Flex flex={1} alignItems="center">
                   <EmojiPicker onEmojiSelected={handleSetEmoji} />
                 </Flex>
               </Flex>
 
               <Flex flex={1} flexDirection="column" mr={2}>
-                <Label htmlFor='name'>Name</Label>
                 <Input
                   id='name'
                   name='name'
@@ -101,10 +100,6 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
                   autoComplete="off"
                 />
               </Flex>
-
-              <Flex alignItems="flex-end">
-                <Button type="submit" disabled={isSubmitting}>Save</Button>
-              </Flex>
             </Flex>
 
             {errors.name && touched.name && (
@@ -114,6 +109,13 @@ export const AddProjectForm = ({ onSubmitted }: TProps) => {
                 </Text>
               </Box>
             )}
+          </Flex>
+
+          <Flex alignItems="flex-end">
+            <Box mr={2}>
+              <Button type="submit" disabled={isSubmitting}>Save</Button>
+            </Box>
+            <Button onClick={onCancel} type="button" disabled={isSubmitting} variant="outline">Cancel</Button>
           </Flex>
         </Flex>
       )}

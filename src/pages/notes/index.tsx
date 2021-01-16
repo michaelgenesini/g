@@ -16,26 +16,30 @@ const Page = () => {
   return (
     <>
       <Box mb={3}>
-        <Heading as='h1' fontSize={6}>Notes</Heading>
+        <Heading as='h1' fontSize={5}>Notes</Heading>
       </Box>
 
-      <Box>
-        {response.data
-          .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
-          .map((object) => (
-            <NoteList key={object._id} note={object} />
-          ))
-        }
+      <Flex flex={1} justifyContent="center" mt={2}>
+        <Flex flexDirection="column" width={800}>
+          <Box>
+            {response.data
+              .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
+              .map((object) => (
+                <NoteList key={object._id} note={object} />
+              ))
+            }
 
-        <Link href="/notes/new" nav>
-          <Flex alignItems="center">
-            <Box mr={2}>
-              <Text fontSize={3} color="primary">+</Text>
-            </Box>
-            <Text>Add note</Text>
-          </Flex>
-        </Link>
-      </Box>
+            <Link href="/notes/new" nav>
+              <Flex alignItems="center">
+                <Box mr={2}>
+                  <Text fontSize={3} color="primary">+</Text>
+                </Box>
+                <Text>Add note</Text>
+              </Flex>
+            </Link>
+          </Box>
+        </Flex>
+      </Flex>
     </>
   )
 }

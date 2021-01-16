@@ -4,6 +4,7 @@ import { deleteTodo } from '@/api/todos'
 import { Link } from '@/components/Link'
 import { Box, Card, Text, Flex } from 'rebass'
 import { TTodo } from '@/types'
+// import { Todo } from './Todo'
 
 type TProps = {
   todo: TTodo
@@ -35,17 +36,17 @@ export const TodoList = ({ todo }: TProps) => {
           <Flex>
             <Flex flex={1} flexDirection="column">
               <Text fontSize={3} fontWeight="bold">{todo.name}</Text>
-              <Text color="muted">{formatDistanceToNowStrict(parseISO(todo.createdAt), { addSuffix: true })}</Text>
+              <Text color="gray">{formatDistanceToNowStrict(parseISO(todo.createdAt), { addSuffix: true })}</Text>
             </Flex>
 
             <Flex flexDirection="column" justifyContent="flex-end">
-              <Text color="muted" onClick={handleDelete}>🗑</Text>
+              <Text color="gray" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
         </Link>
       </Box>
 
-      <Box width={1} height={1} bg="muted" />
+      <Box width={1} height={1} bg="gray" />
     </>
   )
 }

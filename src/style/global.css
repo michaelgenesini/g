@@ -1,8 +1,20 @@
+/* Fotns */
+@font-face {
+  font-family: 'GT-America-Extended';
+  src: url('/GT-America-Extended-Medium.latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'GT-America-Standard';
+  src: url('/GT-America-Standard-Regular.latin.woff2') format('woff2');
+}
+
 /* Global */
 body, html {
   height: 100%;
   display: block;
 }
+
 #__next {
   height: 100%;
   min-height: 100%;
@@ -15,7 +27,7 @@ body, html {
   pointer-events: none;
 }
 #nprogress .bar {
-  background: #5c6ac4;
+  background: #07c;
   position: fixed;
   z-index: 1031;
   top: 0;
@@ -29,7 +41,7 @@ body, html {
   right: 0px;
   width: 100px;
   height: 100%;
-  box-shadow: 0 0 10px #5c6ac4, 0 0 5px #5c6ac4;
+  box-shadow: 0 0 10px #07c, 0 0 5px #07c;
   opacity: 1;
   -webkit-transform: rotate(3deg) translate(0px, -4px);
   -ms-transform: rotate(3deg) translate(0px, -4px);
@@ -47,8 +59,8 @@ body, html {
   height: 18px;
   box-sizing: border-box;
   border: solid 2px transparent;
-  border-top-color: #5c6ac4;
-  border-left-color: #5c6ac4;
+  border-top-color: #07c;
+  border-left-color: #07c;
   border-radius: 50%;
   -webkit-animation: nprogresss-spinner 400ms linear infinite;
   animation: nprogress-spinner 400ms linear infinite;

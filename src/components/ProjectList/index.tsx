@@ -44,13 +44,13 @@ export const ProjectList = ({ project, onDelete }: TProps) => {
             </Flex>
 
             <Flex flexDirection="column" justifyContent="flex-end">
-              <Text color="muted" onClick={handleDelete}>🗑</Text>
+              <Text color="gray" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
         </Link>
       </Box>
 
-      <Box width={1} height={1} bg="muted" />
+      <Box width={1} height={1} bg="gray" />
     </>
   )
 }

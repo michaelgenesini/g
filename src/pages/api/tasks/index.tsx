@@ -36,7 +36,7 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const payload = JSON.parse(req.body) as TPayload
 
-    const content = payload.content
+    const { content, todo_id } = payload
 
     if (!content) throw 'Missing field: content'
 
@@ -49,16 +49,9 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
         archived: false,
         completed: false,
         createdAt: date.toISOString(),
+        status: 'NEW',
+        todo_id: new ObjectID(todo_id),
       })
-
-    if (payload.todo_id !== undefined) {
-      await (req as NextApiRequestWithDB).db
-        .collection('todos')
-        .updateOne(
-          { _id: new ObjectID(payload.todo_id) },
-          { $push: { tasks: doc.insertedId } },
-        )
-    }
 
     return res
       .status(200)

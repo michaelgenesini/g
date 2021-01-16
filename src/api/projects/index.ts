@@ -18,6 +18,19 @@ export const addProject = async ({ emoji, name }: { emoji: BaseEmoji, name: stri
   },
 )
 
+type TUpdateProjectParameter = Pick<TProject, '_id'> & Partial<Pick<TProject, 'view' | 'todos_expanded'>>
+
+export const updateProject = async ({ _id, todos_expanded, view }: TUpdateProjectParameter) => fetcher(
+  `http://localhost:3001/api/projects/${_id}`,
+  {
+    method: 'post',
+    body: JSON.stringify({
+      todos_expanded,
+      view,
+    })
+  },
+)
+
 export const deleteProject = async (uuid: string) => fetcher(
   `http://localhost:3001/api/projects/${uuid}`,
   {

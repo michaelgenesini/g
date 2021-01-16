@@ -25,10 +25,11 @@ export const EmojiPicker = ({ onEmojiSelected }: TProps) => {
   useEffect(() => {
     const allEmoji = Object.values(emojiIndex.emojis)
     const randomNumber = Math.floor(Math.random() * allEmoji.length)
-    const selectedEmoji = allEmoji[randomNumber] as BaseEmoji
+    const selectedEmoji = allEmoji[randomNumber] as any
+    const skinlessEmoji: BaseEmoji = selectedEmoji['1'] ? selectedEmoji['1'] : selectedEmoji
 
-    setRandomEmoji(selectedEmoji)
-    onEmojiSelected(selectedEmoji)
+    setRandomEmoji(skinlessEmoji)
+    onEmojiSelected(skinlessEmoji)
   }, [])
 
   if (!randomEmoji) {
@@ -57,6 +58,7 @@ export const EmojiPicker = ({ onEmojiSelected }: TProps) => {
             onSelect={handleChooseEmoji}
             set="apple"
             title=""
+            skin={3}
             showPreview={false}
             showSkinTones={false}
             emojiTooltip

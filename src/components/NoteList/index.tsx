@@ -43,11 +43,11 @@ export const NoteList = ({ note }: TProps) => {
           <Flex>
             <Flex flex={1} flexDirection="column">
               <Text fontSize={3} fontWeight="bold">{note.name}</Text>
-              <Text color="muted">{formatDistanceToNowStrict(parseISO(note.createdAt), { addSuffix: true })}</Text>
+              <Text color="gray">{formatDistanceToNowStrict(parseISO(note.createdAt), { addSuffix: true })}</Text>
             </Flex>
 
             <Flex flexDirection="column" justifyContent="flex-end">
-              <Text color="muted" onClick={handleDelete}>🗑</Text>
+              <Text color="gray" onClick={handleDelete}>🗑</Text>
             </Flex>
           </Flex>
         </Card>

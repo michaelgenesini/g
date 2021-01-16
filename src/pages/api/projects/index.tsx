@@ -56,6 +56,8 @@ const put = async (req: NextApiRequest, res: NextApiResponse) => {
       .insertOne({
         emoji,
         name,
+        view: 'LIST',
+        todos_expanded: false,
         createdAt: date.toISOString(),
       })
 

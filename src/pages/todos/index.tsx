@@ -15,26 +15,30 @@ const Page = () => {
   return (
     <>
       <Box mb={3}>
-        <Heading as='h1' fontSize={6}>Todos</Heading>
+        <Heading as='h1' fontSize={5}>Todos</Heading>
       </Box>
 
-      <Box mb={2}>
-        {response.data
-          .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
-          .map((object) => (
-            <TodoList key={object._id} todo={object} />
-          ))
-        }
-      </Box>
-
-      <Link href="/todos/new" nav>
-        <Flex alignItems="center">
-          <Box mr={2}>
-            <Text fontSize={3} color="primary">+</Text>
+      <Flex flex={1} justifyContent="center" mt={2}>
+        <Flex flexDirection="column" width={800}>
+          <Box mb={2}>
+            {response.data
+              .sort((a, b) => compareDesc(new Date(a.createdAt), new Date(b.createdAt)))
+              .map((object) => (
+                <TodoList key={object._id} todo={object} />
+              ))
+            }
           </Box>
-          <Text>Add note</Text>
+
+          <Link href="/todos/new" nav>
+            <Flex alignItems="center">
+              <Box mr={2}>
+                <Text fontSize={3} color="primary">+</Text>
+              </Box>
+              <Text>Add note</Text>
+            </Flex>
+          </Link>
         </Flex>
-      </Link>
+      </Flex>
     </>
   )
 }

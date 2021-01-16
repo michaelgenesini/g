@@ -15,12 +15,12 @@ export const Layout = ({ children }: TProps) => (
   <ThemeProvider theme={theme}>
     <Progress />
 
-    <Header />
-
     <Flex flex={1}>
-      <Box bg='gray' p={3} width="300px">
+      <Flex flexDirection="column" bg='muted' p={3} width={300}>
+        <Header />
+
         <Sidebar />
-      </Box>
+      </Flex>
 
       <Flex flex={1} flexDirection="column">
         {/* <BreadCrumb /> */}

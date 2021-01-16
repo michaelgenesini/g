@@ -27,7 +27,7 @@ const Page = ({ noteId }: TProps) => {
       </Box>
 
       <Box mb={2}>
-        <Text color="muted">{format(parseISO(note.createdAt), 'dd MMMM p')}</Text>
+        <Text color="gray">{format(parseISO(note.createdAt), 'dd MMMM p')}</Text>
       </Box>
 
       <Box mb={3} height={1} width={1} bg='gray' />

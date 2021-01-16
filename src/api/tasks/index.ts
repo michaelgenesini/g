@@ -36,8 +36,6 @@ export const updateTask = async ({ _id, completed }: TUpdateTaskParameter) => fe
   },
 )
 
-
-
 export const deleteTodo = async (_id: string) =>  fetcher(`http://localhost:3001/api/tasks/${_id}`,
   {
     method: 'delete',

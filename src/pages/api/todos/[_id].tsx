@@ -15,8 +15,8 @@ const get = async (req: NextApiRequest, res: NextApiResponse) => {
         {
           $lookup: {
             from: 'tasks',
-            localField: 'tasks',
-            foreignField: '_id',
+            localField: '_id',
+            foreignField: 'todo_id',
             as: 'tasks',
           },
         },
