@@ -22,7 +22,7 @@
     "formik": "2.1.4",
     "github-markdown-css": "4.0.0",
     "gray-matter": "4.0.2",
-    "lodash": "4.17.15",
+    "lodash": "4.17.19",
     "mongodb": "3.5.8",
     "next": "9.3.6",
     "next-connect": "0.6.6",
